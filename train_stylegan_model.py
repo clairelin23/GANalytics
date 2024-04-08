@@ -28,7 +28,7 @@ Z_DIM = 512
 # Training settings
 DISCRIMINATOR_GENERATOR_RATIO = 1  # discriminator_generator_ratio
 SHOW_LOSS_PER_SAMPLE = 200
-STEP = 1  # Start training from (8 * 8) resolution ???
+STEP = 0  # Start training from (4x4) resolution, this indicate starting resolution
 MAX_STEP = 7  # 4*4 -> 8*8 -> 16*16 -> 32*32 -> 64*64 -> 128*128 -> 256*256
 # -> 512*512
 LEARNING_RATE_DICT = {128: 0.0015, 256: 0.002}
@@ -99,6 +99,9 @@ class StyleGANTraining:
 
     @staticmethod
     def save_img(tensor, iteration, epoch, index, sav_dir_path):
+        """
+
+        """
         grid = tensor[0]
         grid.clamp_(-1, 1).add_(1).div_(2)
         # Add 0.5 after normalizing to [0, 255] to round to nearest integer

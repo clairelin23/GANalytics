@@ -32,6 +32,9 @@ resize_transform = transforms.Compose([
 
 # define function to interpolate images in order to be used by ignite
 def interpolate(image_batch):
+    """
+    Organize images in a batch into a format usable by ignite
+    """
     transformed_image = []
     for image in image_batch:
         transformed_image.append(resize_transform(image))
@@ -65,18 +68,6 @@ def evaluation_step(data_batch):
     return generated_images, real_images
 
 
-# define evaluation function to calculate FID and IS
-def evaluate(evaluated_model, dataloader):
-    global model
-    model = evaluated_model
-    model.to(DEVICE)
-    model.eval()
-    evaluator.run(dataloader, max_epochs=1)
-    metrics = evaluator.state.metrics
-    fid_score = metrics['fid']
-    is_score = metrics['inception']
-
-    return fid_score, is_score
 
 
 if __name__ == '__main__':
@@ -98,4 +89,12 @@ if __name__ == '__main__':
     resolution = 4 * 2 ** STEP
     origin_loader = gain_sample(dataset, MINI_BATCH_SIZE, resolution)
 
-    print(evaluate(generator, origin_loader))
+    model = generator
+    model.to(DEVICE)
+    model.eval()
+    evaluator.run(origin_loader, max_epochs=1)
+    metrics = evaluator.state.metrics
+    fid_score = metrics['fid']
+    is_score = metrics['inception']
+
+    print(fid_score, is_score)

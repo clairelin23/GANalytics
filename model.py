@@ -58,9 +58,10 @@ class LearnedAffineTransform(nn.Module):
 
     def __init__(self, dim_latent, n_channel):
         super().__init__()
-        self.transform = ScaledLinear(dim_latent, n_channel * 2)
-        self.transform.linear.bias.data[:n_channel] = 1
-        self.transform.linear.bias.data[n_channel:] = 0
+        self.transform = ScaledLinear(dim_latent, n_channel * 2) # 1st half is style standard deviation, 2nd half is style mean
+        self.transform.linear.bias.data[:n_channel] = 1 # initializes to be 1 so that initially the style SD can be 1
+        self.transform.linear.bias.data[n_channel:] = 0 # initializes to be 0 so that initially the style mean can be 0
+
 
     def forward(self, w):
         style = self.transform(w).unsqueeze(2).unsqueeze(3)
